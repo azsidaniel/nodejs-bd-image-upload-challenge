@@ -1,5 +1,4 @@
-import { getRepository } from 'typeorm';
-import { v4 } from 'uuid';
+import { getCustomRepository, getRepository } from 'typeorm';
 
 import AppError from '../errors/AppError';
 import TransactionsRepository from '../repositories/TransactionsRepository';
@@ -21,7 +20,7 @@ class CreateTransactionService {
   }: RequestDTO): Promise<Transaction> {
     let category_id: string;
 
-    const transactionsRepository = new TransactionsRepository();
+    const transactionsRepository = getCustomRepository(TransactionsRepository);
 
     const balance = await transactionsRepository.getBalance();
 
@@ -32,19 +31,15 @@ class CreateTransactionService {
     const categoryRepository = getRepository(Category);
 
     const categoryWithSameTitle = await categoryRepository.findOne({
-      where: { category },
+      where: { title: category },
     });
 
     if (!categoryWithSameTitle) {
-      category_id = v4();
-      const categoryRef = categoryRepository.create({
-        id: category_id,
+      const newCategory = categoryRepository.create({
         title: category,
-        created_at: new Date(),
-        updated_at: new Date(),
       });
-      categoryRepository.save(categoryRef);
-      //  PEGAR O ID DA CAREGORIA CRIADA
+      categoryRepository.save(newCategory);
+      category_id = newCategory.id;
     } else {
       category_id = categoryWithSameTitle.id;
     }
@@ -55,6 +50,7 @@ class CreateTransactionService {
       type,
       category_id,
     });
+
     transactionsRepository.save(transaction);
 
     return transaction;
