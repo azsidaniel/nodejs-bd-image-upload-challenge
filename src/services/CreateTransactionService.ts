@@ -35,23 +35,23 @@ class CreateTransactionService {
     });
 
     if (!categoryWithSameTitle) {
-      const newCategory = categoryRepository.create({
+      const categoryRef = categoryRepository.create({
         title: category,
       });
-      categoryRepository.save(newCategory);
+      const newCategory = await categoryRepository.save(categoryRef);
       category_id = newCategory.id;
     } else {
       category_id = categoryWithSameTitle.id;
     }
 
-    const transaction = transactionsRepository.create({
+    const transactionRef = transactionsRepository.create({
       title,
       value,
       type,
       category_id,
     });
 
-    transactionsRepository.save(transaction);
+    const transaction = await transactionsRepository.save(transactionRef);
 
     return transaction;
   }
