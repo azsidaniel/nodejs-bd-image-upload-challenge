@@ -1,5 +1,5 @@
 import request from 'supertest';
-// import path from 'path';
+import path from 'path';
 import { Connection, getConnection, getRepository } from 'typeorm';
 import createConnection from '../database';
 
@@ -195,7 +195,7 @@ describe('Transaction', () => {
 
     expect(transaction).toBeFalsy();
   });
-  /*
+
   it('should be able to import transactions', async () => {
     const transactionsRepository = getRepository(Transaction);
     const categoriesRepository = getRepository(Category);
@@ -236,5 +236,5 @@ describe('Transaction', () => {
         }),
       ]),
     );
-  }); */
+  });
 });
